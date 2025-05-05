@@ -1,7 +1,7 @@
 from services.scraping_elenco import FuriaScraper
 from utils.constants import text_menu
 
-def mensagem_elenco():
+def get_elenco_message():
     scraper = FuriaScraper()
     players = scraper.get_players()
     coach = scraper.get_coach()

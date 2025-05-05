@@ -4,7 +4,8 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 from datetime import datetime
-import utils.constants as URL_elenco
+from utils.constants import URL_elenco
+
 import re
 import time
 import locale
@@ -19,7 +20,6 @@ class ScrapingPartidas:
     def get_partida(self):
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=self.options)
 
-        URL_elenco = "https://draft5.gg/equipe/330-FURIA"
         driver.get(URL_elenco)
         time.sleep(5)
 

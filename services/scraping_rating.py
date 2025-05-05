@@ -32,9 +32,9 @@ class PlayerRatingFetcher:
 
                 if match:
                     numero, texto = match.groups()
-                    ratings.append(f"{player} - {texto} {numero}")
+                    ratings.append(f"{player} - {numero}")
                 else:
-                    ratings.append(f"{player} - Rating N/A")
+                    ratings.append(f"{player} - N/A")
             except Exception as e:
                 ratings.append(f"{player} - Erro ao obter rating")
 

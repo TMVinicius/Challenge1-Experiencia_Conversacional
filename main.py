@@ -1,11 +1,11 @@
 import telebot
 from config import CHAVE_API
-from utils.elenco import message_elenco
-from utils.rating import message_rating
 from utils.constants import text_base, text_menu, ORG
-from utils.loja import message_loja
-from utils.produtos import message_produtos
-from utils.quiz import sortear_perguntas, message_quiz
+from utils.elenco import get_elenco_message
+from utils.rating import get_rating_message
+from utils.loja import get_loja_message
+from utils.produtos import get_produtos_message
+from utils.quiz import get_random_questions, handle_quiz_message
 from services.scraping_partidas import ScrapingPartidas
 
 bot = telebot.TeleBot(CHAVE_API)
@@ -20,7 +20,7 @@ def start(message):
 @bot.message_handler(commands=['elenco'])
 def elenco_handler(message):
     try:
-        text = message_elenco()
+        text = get_elenco_message()
         bot.send_message(message.chat.id, text, parse_mode="Markdown")
     except Exception as e:
         bot.send_message(message.chat.id, f"Erro ao buscar elenco: {str(e)}")
@@ -29,7 +29,8 @@ def elenco_handler(message):
 @bot.message_handler(commands=['rating'])
 def rating_handler(message):
     try:
-        text = message_rating()
+        bot.send_message(message.chat.id, f"🔍 Buscando stats do elenco {ORG}...")
+        text = get_rating_message()
         bot.send_message(message.chat.id, text, parse_mode="Markdown")
     except Exception as e:
         bot.send_message(message.chat.id, f"Erro ao buscar ratings: {str(e)}")
@@ -41,7 +42,7 @@ def partidas_handler(message):
     bot.send_message(message.chat.id, f"🔍 Buscando próxima partida da {ORG}...")
     info_partida = scraper.get_partida()
     bot.send_message(message.chat.id, info_partida, parse_mode='Markdown')
-    menu_text = "👇  Aqui estão os comandos que você pode usar:\n"
+    menu_text = "👇 Aqui estão os comandos que você pode usar:\n"
     menu_text += text_base
     bot.send_message(message.chat.id, menu_text)
 
@@ -49,7 +50,7 @@ def partidas_handler(message):
 @bot.message_handler(commands=['loja'])
 def loja_handler(message):
     try:
-        imagem_url, legenda = message_loja()
+        imagem_url, legenda = get_loja_message()
         legenda += "\n" + text_menu
         if imagem_url:
             bot.send_photo(message.chat.id, photo=imagem_url, caption=legenda, parse_mode="Markdown")
@@ -62,11 +63,11 @@ def loja_handler(message):
 @bot.message_handler(commands=['produtos'])
 def produtos_handler(message):
     try:
-        lista_produtos = message_produtos()
+        lista_produtos = get_produtos_message()
         for imagem_url, legenda in lista_produtos:
             bot.send_photo(message.chat.id, photo=imagem_url, caption=legenda, parse_mode="Markdown")
         
-        menu_text = "👇  Aqui estão os comandos que você pode usar:\n"
+        menu_text = "👇 Aqui estão os comandos que você pode usar:\n"
         menu_text += text_base
         bot.send_message(message.chat.id, menu_text)
     except Exception as e:
@@ -77,7 +78,7 @@ usuarios_quiz = {}
 @bot.message_handler(commands=['quiz'])
 def quiz_handler(message):
     user_id = message.from_user.id
-    perguntas = sortear_perguntas()
+    perguntas = get_random_questions()
 
     usuarios_quiz[user_id] = {"perguntas": perguntas, "indice": 0, "acertos": 0}
 
@@ -90,8 +91,15 @@ def quiz_handler(message):
 
 @bot.message_handler(func=lambda message: message.from_user.id in usuarios_quiz)
 def handle_resposta_quiz(message):
-    message_quiz(bot, message, usuarios_quiz)
+    handle_quiz_message(bot, message, usuarios_quiz)
 
+
+
+@bot.message_handler(commands=['menu'])
+def start(message):
+     text = "👇 Aqui estão os comandos que você pode usar:\n"
+     text += text_base
+     bot.send_message(message.chat.id, text)
 
 
 def verificar(message):
