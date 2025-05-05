@@ -62,7 +62,3 @@
    python main.py
    ```
 
-
-## 📧 Contato
-
-Para qualquer dúvida ou feedback, entre em contato comigo por [viniciustavaresbr@gmail.com](mailto:viniciustavaresbr@gmail.com).
