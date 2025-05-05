@@ -27,7 +27,7 @@ homepage = "https://github.com/TMVinicius/challenge-experiencia-conversacional-f
 documentation = "https://github.com/TMVinicius/challenge-experiencia-conversacional-furia/README.md"
 
 [tool.ruff]
-line-length = 79
+line-length = 180
 
 [tool.ruff.format]
 preview = true
